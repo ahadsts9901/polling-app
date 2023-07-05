@@ -129,6 +129,7 @@ column,
     flex-direction: column;
     justify-content: right;
     align-items: center; */
+    margin: 0em!important;
 }
 
 #poll-container input[type="text"],
@@ -168,7 +169,7 @@ button:hover {
 }
 
 #option-container {
-    width: 90%;
+    width: 100%;
     display: flex;
     justify-content: center;
     /* justify-content: right; */
@@ -179,11 +180,11 @@ button:hover {
 }
 
 .input {
-    width: 90% !important;
+    width: 95% !important;
 }
 
 #option-container input {
-    width: 90% !important;
+    width: 100% !important;
 }
 
 .opt-cont {

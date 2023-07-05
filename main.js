@@ -37,10 +37,10 @@ function createPoll(event) {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
 
     db.collection("polls").add({
-        question: question,
-        options: options,
-        timestamp: timestamp
-    })
+            question: question,
+            options: options,
+            timestamp: timestamp
+        })
         .then((docRef) => {
             console.log("Document written with ID: ", docRef.id);
             renderPolls();
@@ -67,7 +67,7 @@ function renderPolls() {
             if (querySnapshot.empty) {
                 container.innerText = "No Polls Found";
             } else {
-                querySnapshot.forEach(function (doc) {
+                querySnapshot.forEach(function(doc) {
                     var data = doc.data();
                     let voteCont = document.createElement("div");
                     voteCont.className = "column border";
@@ -84,15 +84,23 @@ function renderPolls() {
                         let totalVotes = 0;
 
                         // Calculate the total number of votes
-                        data.options.forEach(function (option) {
+                        data.options.forEach(function(option) {
                             totalVotes += option.votes;
                         });
 
-                        data.options.forEach(function (option, index) {
+                        data.options.forEach(function(option, index) {
                             let optionElement = document.createElement('div');
                             optionElement.className += " row"
                             let percentage = totalVotes > 0 ? (option.votes / totalVotes) * 100 : 0;
                             optionElement.innerHTML = `${option.text} (${percentage.toFixed(2)}%)`;
+                            optionElement.style.width = `${ percentage.toFixed(2)}%`
+                            if (optionElement.style.width !== '0%') {
+                                optionElement.style.width = `${ percentage.toFixed(2)}%`
+                                optionElement.style.background = " red"
+                            } else {
+                                optionElement.style.background = " white"
+                            }
+                            optionElement.style.padding = "1em"
                             optionElement.style.wordSpacing = "0.5em"
                             optionElement.dataset.index = index; // Set custom data attribute for referencing the option
                             optionElement.addEventListener('click', voteOnOption);
@@ -121,8 +129,8 @@ function voteOnOption(event) {
 
     // Check if the user has already voted using a browser cookie
     //if (hasVoted()) {
-        //console.log("You have already voted.");
-        //return;
+    //console.log("You have already voted.");
+    //return;
     //}
 
     // Increment the vote count for the selected option
@@ -167,6 +175,6 @@ function setVotedCookie() {
     document.cookie = "voted=true; expires=Fri, 31 Dec 9999 23:59:59 GMT";
 }
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function() {
     renderPolls();
 });
