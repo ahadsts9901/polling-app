@@ -120,10 +120,10 @@ function voteOnOption(event) {
     let pollId = event.target.closest('.border').dataset.pollId;
 
     // Check if the user has already voted using a browser cookie
-    if (hasVoted()) {
-        console.log("You have already voted.");
-        return;
-    }
+    //if (hasVoted()) {
+        //console.log("You have already voted.");
+        //return;
+    //}
 
     // Increment the vote count for the selected option
     db.collection("polls").doc(pollId).get().then((doc) => {
