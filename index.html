@@ -61,13 +61,13 @@
 
     <form class="column" id="poll-container" onsubmit="createPoll(event)">
         <h2>Create a Poll</h2>
-        <input type="text" id="poll-question" placeholder="Enter your question" required>
-        <input type="text" id="option1" placeholder="Option 1" required>
-        <input type="text" id="option2" placeholder="Option 2" required>
-        <div class="opt-cont">
-            <!-- This is where the poll options will be added dynamically -->
+        <input type="text" id="poll-question" placeholder="Enter your question" required class="input">
+        <div id="option-container">
+            <input type="text" id="option1" placeholder="Option 1" required class="input">
+            <input type="text" id="option2" placeholder="Option 2" required class="input">
         </div>
         <button type="submit">Create Poll</button>
+        <button type="button" onclick="addOption()">+ Add Option</button>
         <!-- <button onclick="logout()">Logout</button> -->
     </form>
 

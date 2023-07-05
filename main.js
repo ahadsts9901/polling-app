@@ -1,4 +1,4 @@
-firebaseConfig = {
+const firebaseConfig = {
     apiKey: "AIzaSyA93YcqOxOMeHDcoCQslObQ1FtCmRNnufY",
     authDomain: "polling-f42f3.firebaseapp.com",
     projectId: "polling-f42f3",
@@ -7,18 +7,9 @@ firebaseConfig = {
     appId: "1:29956748026:web:f0502c192a36adc5e44f43",
     measurementId: "G-C56MRZG7DG"
 };
-
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 var db = firebase.firestore();
-
-// function login(event) {
-//     event.preventDefault()
-
-//     let email = document.getElementById("email").value
-//     let password = document.getElementById("password").value
-
-// }
 
 function createPoll(event) {
     event.preventDefault();
@@ -27,55 +18,96 @@ function createPoll(event) {
     voteContainer.style.display = "block";
 
     let question = document.getElementById('poll-question').value;
-    let options = document.querySelector(".opt-cont")
+
+    let optionContainer = document.getElementById('option-container');
+    let optionInputs = optionContainer.getElementsByTagName('input');
+    let options = [];
+
+    for (let i = 0; i < optionInputs.length; i++) {
+        let optionValue = optionInputs[i].value.trim();
+        if (optionValue !== '') {
+            options.push({
+                text: optionValue,
+                votes: 0
+            });
+        }
+    }
 
     // Get the current timestamp
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
 
     db.collection("polls").add({
         question: question,
-        options: options.innerHTML,
-        timestamp: timestamp  // Add the timestamp field to the document
+        options: options,
+        timestamp: timestamp
     })
         .then((docRef) => {
             console.log("Document written with ID: ", docRef.id);
-            // console.log(document.getElementById("vote-container"));
             renderPolls();
         })
         .catch((error) => {
             console.error("Error adding document: ", error);
         });
+
+    // Clear the form inputs after creating the poll
+    document.getElementById('poll-question').value = '';
+    for (let i = 0; i < optionInputs.length; i++) {
+        optionInputs[i].value = '';
+    }
 }
 
 function renderPolls() {
-    // event.preventDefault(); 
-    let container = document.getElementById('vote-container')
+    let container = document.getElementById('vote-container');
+    container.innerHTML = ''; // Clear the container before rendering new polls
+
     db.collection("polls")
-        .orderBy("timestamp", "desc")  // Sort by timestamp in descending order
+        .orderBy("timestamp", "desc")
         .get()
         .then((querySnapshot) => {
-            if (querySnapshot.size === 0) {
-                container.innerText = "No Polls Found"
+            if (querySnapshot.empty) {
+                container.innerText = "No Polls Found";
             } else {
-                container.innerText = ""
                 querySnapshot.forEach(function (doc) {
                     var data = doc.data();
-                    let body = document.getElementById("vote-container")
+                    let voteCont = document.createElement("div");
+                    voteCont.className = "column border";
+                    voteCont.dataset.pollId = doc.id; // Set the poll ID in the dataset
 
-                    let voteCont = document.createElement("div")
-                    voteCont.className += " column border"
+                    let voteHead = document.createElement("h3");
+                    voteHead.innerText = data.question;
+                    voteCont.appendChild(voteHead);
 
-                    let voteHead = document.createElement("h3")
-                    voteHead.innerText = data.question
-                    voteCont.appendChild(voteHead)
+                    let optCont = document.createElement('div');
+                    optCont.className = "column opt-cont";
 
-                    let optCont = document.createElement('div')
-                    optCont.className += " column opt-cont"
-                    optCont.innerHTML = data.options
-                    voteCont.appendChild(optCont)
+                    if (data.options && data.options.length > 0) {
+                        let totalVotes = 0;
 
-                    body.appendChild(voteCont)
-                })
+                        // Calculate the total number of votes
+                        data.options.forEach(function (option) {
+                            totalVotes += option.votes;
+                        });
+
+                        data.options.forEach(function (option, index) {
+                            let optionElement = document.createElement('div');
+                            optionElement.className += " row"
+                            let percentage = totalVotes > 0 ? (option.votes / totalVotes) * 100 : 0;
+                            optionElement.innerHTML = `${option.text} (${percentage.toFixed(2)}%)`;
+                            optionElement.style.wordSpacing = "0.5em"
+                            optionElement.dataset.index = index; // Set custom data attribute for referencing the option
+                            optionElement.addEventListener('click', voteOnOption);
+                            optCont.appendChild(optionElement);
+                        });
+                    } else {
+                        let noOptions = document.createElement('p');
+                        noOptions.innerText = "No options available";
+                        optCont.appendChild(noOptions);
+                    }
+
+                    voteCont.appendChild(optCont);
+
+                    container.appendChild(voteCont);
+                });
             }
         })
         .catch((error) => {
@@ -83,7 +115,58 @@ function renderPolls() {
         });
 }
 
-document.addEventListener("DOMContentLoaded", function() {
+function voteOnOption(event) {
+    let optionIndex = event.target.dataset.index;
+    let pollId = event.target.closest('.border').dataset.pollId;
+
+    // Check if the user has already voted using a browser cookie
+    if (hasVoted()) {
+        console.log("You have already voted.");
+        return;
+    }
+
+    // Increment the vote count for the selected option
+    db.collection("polls").doc(pollId).get().then((doc) => {
+        if (doc.exists) {
+            let pollData = doc.data();
+            let options = pollData.options;
+            options[optionIndex].votes++;
+            return db.collection("polls").doc(pollId).update({
+                options: options
+            });
+        }
+    }).then(() => {
+        console.log("Vote recorded");
+        // Set a browser cookie to track that the user has voted
+        setVotedCookie();
+        renderPolls();
+    }).catch((error) => {
+        console.error("Error voting on option: ", error);
+    });
+}
+
+function addOption() {
+    let optionContainer = document.getElementById('option-container');
+    let optionCount = optionContainer.childElementCount;
+
+    let input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = 'Option ' + (optionCount + 1);
+    input.required = true;
+
+    optionContainer.appendChild(input);
+}
+
+// Check if the user has already voted by checking a browser cookie
+function hasVoted() {
+    return document.cookie.includes("voted=true");
+}
+
+// Set a browser cookie to track that the user has voted
+function setVotedCookie() {
+    document.cookie = "voted=true; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+}
+
+document.addEventListener("DOMContentLoaded", function () {
     renderPolls();
-    console.log("yes")
 });

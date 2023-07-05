@@ -1,10 +1,11 @@
 * {
     font-family: "Poppins", "sans-serif";
     font-weight: bold;
+    box-sizing: border-box;
 }
 
 ::placeholder {
-    font-weight: normal!important;
+    font-weight: normal !important;
 }
 
 body {
@@ -15,7 +16,7 @@ body {
     justify-content: right;
     align-items: center;
     row-gap: 2em;
-    padding: 2em 0em!important;
+    padding: 2em 0em !important;
     margin: 0em;
     width: 100vw;
     height: 100vh;
@@ -30,7 +31,7 @@ h3,
 h4,
 h5,
 h6 {
-    margin: 0em!important;
+    margin: 0em !important;
 }
 
 .drop-down {
@@ -67,12 +68,12 @@ h6 {
 a,
 .list>a {
     color: #212121;
-    text-decoration: none!important;
-    margin: 0.3em!important;
+    text-decoration: none !important;
+    margin: 0.3em !important;
 }
 
 .icon {
-    margin-right: 0.5em!important;
+    margin-right: 0.5em !important;
 }
 
 row {
@@ -153,8 +154,44 @@ button:hover {
     background-color: #0069d9;
 }
 
-.border{
-    margin-bottom: 1em!important;
+.border {
+    margin: 1em 0em !important;
     /* border: none; */
     padding: 1.5em 1em;
+    width: 90%;
+}
+
+.border>h3 {
+    width: 100%;
+    text-align: left;
+    margin-left: 0.5em;
+}
+
+#option-container {
+    width: 90%;
+    display: flex;
+    justify-content: center;
+    /* justify-content: right; */
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.5em;
+    row-gap: 1em;
+}
+
+.input {
+    width: 90% !important;
+}
+
+#option-container input {
+    width: 90% !important;
+}
+
+.opt-cont {
+    width: 100%;
+    align-items: start;
+}
+
+.opt-cont>p {
+    width: 100%;
+    padding: 0.3em 0.6em;
 }
