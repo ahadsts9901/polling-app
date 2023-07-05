@@ -21,27 +21,69 @@ var db = firebase.firestore();
 // }
 
 function createPoll(event) {
-    event.preventDefault()
-    let question = document.getElementById('poll-question').value
+    event.preventDefault();
 
-    let voteCont = document.createElement("div")
-    voteCont.className += " column border"
+    let voteContainer = document.getElementById('vote-container');
+    voteContainer.style.display = "block";
 
-    let voteHead = document.createElement("h3")
-    voteHead.innerText = question
-    voteCont.appendChild(voteHead)
+    let question = document.getElementById('poll-question').value;
+    let options = document.querySelector(".opt-cont")
 
-    let body = event.target.parentNode
-    body.appendChild(voteCont)
+    // Get the current timestamp
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
 
     db.collection("polls").add({
-            question: question
-                // options: document.getElementById("vote-container")
-        })
+        question: question,
+        options: options.innerHTML,
+        timestamp: timestamp  // Add the timestamp field to the document
+    })
         .then((docRef) => {
             console.log("Document written with ID: ", docRef.id);
+            // console.log(document.getElementById("vote-container"));
+            renderPolls();
         })
         .catch((error) => {
             console.error("Error adding document: ", error);
         });
 }
+
+function renderPolls() {
+    // event.preventDefault(); 
+    let container = document.getElementById('vote-container')
+    db.collection("polls")
+        .orderBy("timestamp", "desc")  // Sort by timestamp in descending order
+        .get()
+        .then((querySnapshot) => {
+            if (querySnapshot.size === 0) {
+                container.innerText = "No Polls Found"
+            } else {
+                container.innerText = ""
+                querySnapshot.forEach(function (doc) {
+                    var data = doc.data();
+                    let body = document.getElementById("vote-container")
+
+                    let voteCont = document.createElement("div")
+                    voteCont.className += " column border"
+
+                    let voteHead = document.createElement("h3")
+                    voteHead.innerText = data.question
+                    voteCont.appendChild(voteHead)
+
+                    let optCont = document.createElement('div')
+                    optCont.className += " column opt-cont"
+                    optCont.innerHTML = data.options
+                    voteCont.appendChild(optCont)
+
+                    body.appendChild(voteCont)
+                })
+            }
+        })
+        .catch((error) => {
+            console.error("Error getting polls: ", error);
+        });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    renderPolls();
+    console.log("yes")
+});

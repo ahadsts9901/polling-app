@@ -118,12 +118,16 @@ column,
 #poll-container,
 #vote-container,
 #results-container {
-    max-width: 100%;
-    margin: 0 auto;
+    width: 80%;
+    /* max-height: 300px; */
     padding: 1em;
     border: 1px solid #ccc;
     border-radius: 15px;
-    margin-top: 20px;
+    /* display: flex;
+    row-gap: 1em!important;
+    flex-direction: column;
+    justify-content: right;
+    align-items: center; */
 }
 
 #poll-container input[type="text"],
@@ -147,4 +151,10 @@ button {
 
 button:hover {
     background-color: #0069d9;
+}
+
+.border{
+    margin-bottom: 1em!important;
+    /* border: none; */
+    padding: 1.5em 1em;
 }
