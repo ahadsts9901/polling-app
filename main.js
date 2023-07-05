@@ -25,19 +25,18 @@ function createPoll(event) {
     let question = document.getElementById('poll-question').value
 
     let voteCont = document.createElement("div")
-    voteCont.className += " column"
+    voteCont.className += " column border"
 
-    let voteHead = document.createElement("h2")
-    voteHead.innerText = "Vote"
+    let voteHead = document.createElement("h3")
+    voteHead.innerText = question
     voteCont.appendChild(voteHead)
 
     let body = event.target.parentNode
     body.appendChild(voteCont)
 
     db.collection("polls").add({
-            first: "Ada",
-            last: "Lovelace",
-            born: 1815
+            question: question
+                // options: document.getElementById("vote-container")
         })
         .then((docRef) => {
             console.log("Document written with ID: ", docRef.id);
