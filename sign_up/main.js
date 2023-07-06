@@ -35,5 +35,11 @@ function signUp(event) {
         })
         .catch((error) => {
             console.log(error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Username Already Taken',
+                confirmButtonColor: "#252525"
+            })
         });
 }

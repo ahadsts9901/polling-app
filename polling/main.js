@@ -1,3 +1,26 @@
+let timerInterval;
+Swal.fire({
+    title: "Loading...",
+    html: "I will close in <b></b> milliseconds.",
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: () => {
+        Swal.showLoading();
+        const b = Swal.getHtmlContainer().querySelector("b");
+        timerInterval = setInterval(() => {
+            b.textContent = Swal.getTimerLeft();
+        }, 100);
+    },
+    willClose: () => {
+        clearInterval(timerInterval);
+    },
+}).then((result) => {
+    /* Read more about handling dismissals below */
+    if (result.dismiss === Swal.DismissReason.timer) {
+        // console.log('I was closed by the timer')
+    }
+});
+
 const firebaseConfig = {
     apiKey: "AIzaSyA93YcqOxOMeHDcoCQslObQ1FtCmRNnufY",
     authDomain: "polling-f42f3.firebaseapp.com",
@@ -19,17 +42,18 @@ function createPoll(event) {
         html: `
         <column>
         <input id="swal-poll-question" class="swal2-input input-sw" placeholder="Enter your question" required>
+        <button id="swal-add-option-btn" class="swal2-styled add-option" type="button">+ Add Option</button>
         <div id="swal-option-container">
           <input id="swal-option1" class="swal2-input input-sw" placeholder="Option 1" required>
           <input id="swal-option2" class="swal2-input input-sw" placeholder="Option 2" required>
         </div>
-        <button id="swal-add-option-btn" class="swal2-styled add-option" type="button">+ Add Option</button>
         </column>
       `,
         confirmButtonColor: "#252525",
+        confirmButtonText: "Add Poll",
         showCancelButton: true,
         cancelButtonColor: "#252525",
-        focusConfirm: false,
+        focusConfirm: true,
         preConfirm: () => {
             const question = document.getElementById("swal-poll-question").value;
 
@@ -63,10 +87,22 @@ function createPoll(event) {
                 })
                 .then((docRef) => {
                     console.log("Document written with ID:", docRef.id);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Added',
+                        text: 'Poll Added Succesfully',
+                        confirmButtonColor: "#252525"
+                    })
                     renderPolls();
                 })
                 .catch((error) => {
                     console.error("Error adding document:", error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error In Adding Poll',
+                        confirmButtonColor: "#252525"
+                    })
                 });
         },
         didOpen: () => {

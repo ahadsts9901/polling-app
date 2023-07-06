@@ -21,10 +21,22 @@ function logIn(event) {
         .signInWithEmailAndPassword(email, password)
         .then((userCredential) => {
             console.log("Login successful");
+            Swal.fire({
+                icon: 'success',
+                title: 'Logged In',
+                text: 'Login Successfull',
+                confirmButtonColor: "#252525"
+            })
             window.location.href = "../polling/index.html";
         })
         .catch((error) => {
             console.log("Login error:", error);
-            alert("Invalid email or password. Please enter correct credentials.");
+            Swal.fire({
+                    icon: 'error',
+                    title: 'Access Denied',
+                    text: 'Invalid email or password. Please enter correct credentials',
+                    confirmButtonColor: "#252525"
+                })
+                // alert("Invalid email or password. Please enter correct credentials.");
         });
 }
