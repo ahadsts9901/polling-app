@@ -128,8 +128,9 @@ form {
     background-color: #fff;
     /* border: 1px solid #0c5c36; */
     border: none;
-    padding: 0.5em;
+    padding: 1em 0.5em;
     border-radius: 10px;
+    width: 13em!important;
 }
 
 .input:focus {

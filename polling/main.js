@@ -5,7 +5,7 @@ const firebaseConfig = {
     storageBucket: "polling-f42f3.appspot.com",
     messagingSenderId: "29956748026",
     appId: "1:29956748026:web:f0502c192a36adc5e44f43",
-    measurementId: "G-C56MRZG7DG"
+    measurementId: "G-C56MRZG7DG",
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
@@ -14,50 +14,86 @@ var db = firebase.firestore();
 function createPoll(event) {
     event.preventDefault();
 
-    let voteContainer = document.getElementById('vote-container');
-    voteContainer.style.display = "block";
+    Swal.fire({
+        title: "Create Poll",
+        html: `
+        <column>
+        <input id="swal-poll-question" class="swal2-input input-sw" placeholder="Enter your question" required>
+        <div id="swal-option-container">
+          <input id="swal-option1" class="swal2-input input-sw" placeholder="Option 1" required>
+          <input id="swal-option2" class="swal2-input input-sw" placeholder="Option 2" required>
+        </div>
+        <button id="swal-add-option-btn" class="swal2-styled add-option" type="button">+ Add Option</button>
+        </column>
+      `,
+        confirmButtonColor: "#252525",
+        showCancelButton: true,
+        cancelButtonColor: "#252525",
+        focusConfirm: false,
+        preConfirm: () => {
+            const question = document.getElementById("swal-poll-question").value;
 
-    let question = document.getElementById('poll-question').value;
+            const optionContainer = document.getElementById("swal-option-container");
+            const optionInputs = optionContainer.getElementsByTagName("input");
 
-    let optionContainer = document.getElementById('option-container');
-    let optionInputs = optionContainer.getElementsByTagName('input');
-    let options = [];
+            const options = [];
 
-    for (let i = 0; i < optionInputs.length; i++) {
-        let optionValue = optionInputs[i].value.trim();
-        if (optionValue !== '') {
-            options.push({
-                text: optionValue,
-                votes: 0
-            });
-        }
-    }
+            if (question.trim() === "" || optionInputs.length < 2) {
+                Swal.showValidationMessage(
+                    "Please fill in the question and at least two options"
+                );
+                return;
+            }
 
-    // Get the current timestamp
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+            for (let i = 0; i < optionInputs.length; i++) {
+                const optionValue = optionInputs[i].value.trim();
+                if (optionValue !== "") {
+                    options.push({ text: optionValue, votes: 0 });
+                }
+            }
 
-    db.collection("polls").add({
-            question: question,
-            options: options,
-            timestamp: timestamp
-        })
-        .then((docRef) => {
-            console.log("Document written with ID: ", docRef.id);
-            renderPolls();
-        })
-        .catch((error) => {
-            console.error("Error adding document: ", error);
-        });
+            // Get the current timestamp
+            const timestamp = firebase.firestore.FieldValue.serverTimestamp();
 
-    // Clear the form inputs after creating the poll
-    document.getElementById('poll-question').value = '';
-    for (let i = 0; i < optionInputs.length; i++) {
-        optionInputs[i].value = '';
-    }
+            db.collection("polls")
+                .add({
+                    question: question,
+                    options: options,
+                    timestamp: timestamp,
+                })
+                .then((docRef) => {
+                    console.log("Document written with ID:", docRef.id);
+                    renderPolls();
+                })
+                .catch((error) => {
+                    console.error("Error adding document:", error);
+                });
+        },
+        didOpen: () => {
+            const addOptionButton = Swal.getPopup().querySelector(
+                "#swal-add-option-btn"
+            );
+            addOptionButton.addEventListener("click", addOptionToSwal);
+        },
+    });
+}
+
+function addOptionToSwal() {
+    const optionContainer = document.getElementById("swal-option-container");
+
+    const optionCount = optionContainer.childElementCount + 1;
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.placeholder = "Option " + optionCount;
+    input.required = true;
+    input.className += " swal2-input input-sw";
+
+    optionContainer.appendChild(input);
 }
 
 function renderPolls() {
-    let container = document.getElementById('vote-container');
+    let container = document.getElementById("vote-container");
     container.innerHTML = ""; // Clear the container before rendering new polls
 
     db.collection("polls")
@@ -68,6 +104,8 @@ function renderPolls() {
                 container.innerText = "No Polls Found";
             } else {
                 querySnapshot.forEach(function(doc) {
+
+                    // random colors
                     var data = doc.data();
                     let voteCont = document.createElement("div");
                     voteCont.className = "column border";
@@ -77,7 +115,7 @@ function renderPolls() {
                     voteHead.innerText = data.question;
                     voteCont.appendChild(voteHead);
 
-                    let optCont = document.createElement('div');
+                    let optCont = document.createElement("div");
                     optCont.className = "column opt-cont";
 
                     if (data.options && data.options.length > 0) {
@@ -89,25 +127,29 @@ function renderPolls() {
                         });
 
                         data.options.forEach(function(option, index) {
-                            let optionElement = document.createElement('div');
-                            optionElement.className += " row"
-                            let percentage = totalVotes > 0 ? (option.votes / totalVotes) * 100 : 0;
-                            optionElement.innerHTML = `${option.text} (${percentage.toFixed(2)}%)`;
-                            optionElement.style.width = `${ percentage.toFixed(2)}%`
-                            if (optionElement.style.width !== '0%') {
-                                optionElement.style.width = `${ percentage.toFixed(2)}%`
-                                optionElement.style.background = " red"
+                            let optionElement = document.createElement("div");
+                            optionElement.className += " row";
+                            let percentage =
+                                totalVotes > 0 ? (option.votes / totalVotes) * 100 : 0;
+                            optionElement.innerHTML = `${option.text} (${percentage.toFixed(
+                2
+              )}%)`;
+                            optionElement.style.width = `${percentage.toFixed(2)}%`;
+                            if (optionElement.style.width !== "0%") {
+                                optionElement.style.width = `${percentage.toFixed(2)}%`;
+                                optionElement.style.background = "#dadada";
+                                optionElement.style.color = "#252525"
                             } else {
-                                optionElement.style.background = " white"
+                                optionElement.style.background = "white";
                             }
-                            optionElement.style.padding = "0.5em"
-                            optionElement.style.wordSpacing = "0.5em"
+                            optionElement.style.padding = "0.5em";
+                            optionElement.style.wordSpacing = "0.5em";
                             optionElement.dataset.index = index; // Set custom data attribute for referencing the option
-                            optionElement.addEventListener('click', voteOnOption);
+                            optionElement.addEventListener("click", voteOnOption);
                             optCont.appendChild(optionElement);
                         });
                     } else {
-                        let noOptions = document.createElement('p');
+                        let noOptions = document.createElement("p");
                         noOptions.innerText = "No options available";
                         optCont.appendChild(noOptions);
                     }
@@ -125,7 +167,7 @@ function renderPolls() {
 
 function voteOnOption(event) {
     let optionIndex = event.target.dataset.index;
-    let pollId = event.target.closest('.border').dataset.pollId;
+    let pollId = event.target.closest(".border").dataset.pollId;
 
     // Check if the user has already voted using a browser cookie
     //if (hasVoted()) {
@@ -134,61 +176,61 @@ function voteOnOption(event) {
     //}
 
     // Increment the vote count for the selected option
-    db.collection("polls").doc(pollId).get().then((doc) => {
-        if (doc.exists) {
-            let pollData = doc.data();
-            let options = pollData.options;
-            options[optionIndex].votes++;
-            return db.collection("polls").doc(pollId).update({
-                options: options
-            });
-        }
-    }).then(() => {
-        console.log("Vote recorded");
-        // Set a browser cookie to track that the user has voted
-        setVotedCookie();
-        renderPolls();
-    }).catch((error) => {
-        console.error("Error voting on option: ", error);
-    });
+    db.collection("polls")
+        .doc(pollId)
+        .get()
+        .then((doc) => {
+            if (doc.exists) {
+                let pollData = doc.data();
+                let options = pollData.options;
+                options[optionIndex].votes++;
+                return db.collection("polls").doc(pollId).update({
+                    options: options,
+                });
+            }
+        })
+        .then(() => {
+            console.log("Vote recorded");
+            // Set a browser cookie to track that the user has voted
+            setVotedCookie();
+            renderPolls();
+        })
+        .catch((error) => {
+            console.error("Error voting on option: ", error);
+        });
 }
 
-function addOption() {
-    let optionContainer = document.getElementById('option-container');
-    let optionCount = optionContainer.childElementCount;
-
-    let input = document.createElement('input');
-    input.type = 'text';
-    input.placeholder = 'Option ' + (optionCount + 1);
-    input.required = true;
-
-    optionContainer.appendChild(input);
-}
-
-// Check if the user has already voted by checking a browser cookie
-function hasVoted() {
-    return document.cookie.includes("voted=true");
-}
-
-// Set a browser cookie to track that the user has voted
-function setVotedCookie() {
-    document.cookie = "voted=true; expires=Fri, 31 Dec 9999 23:59:59 GMT";
-}
-
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", async function() {
     renderPolls();
+    // await countPolls()
 });
 
 // logout function
 
 function logOut() {
-    firebase.auth().signOut()
+    firebase
+        .auth()
+        .signOut()
         .then(() => {
-            console.log('Sign out successful');
+            console.log("Sign out successful");
             // Redirect to the sign-in page or any other desired destination
             window.location.href = "../sign_in/index.html";
         })
         .catch((error) => {
-            console.log('Sign out error:', error);
+            console.log("Sign out error:", error);
         });
+}
+
+firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+        document.getElementById("user").innerText = user.email.slice(0, -10);
+        console.log(user.email.slice(0, -10));
+    } else {
+        document.getElementById("user").innerText = "Unknown";
+        console.log("not signed in");
+    }
+});
+
+function setVotedCookie() {
+    document.cookie = "voted=true; expires=Fri, 31 Dec 9999 23:59:59 GMT";
 }

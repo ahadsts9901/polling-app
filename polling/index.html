@@ -25,54 +25,32 @@
 
 <body>
 
-    <row>
-        <h1>Polling App</h1>
-        <div class="dropdown">
-            <button class="drop-down" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <column class="header">
+        <row>
+            <div class="dropdown">
+                <button class="drop-down" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <h2 class="bi bi-three-dots-vertical dots"></h2>
             </button>
-            <ul class="dropdown-menu">
-                <li class="list"><a target="_blank" href="https://github.com/ahadsts9901" class="drop-down-options" type="button"><i class="bi bi-github icon"></i>GitHub</a></li>
-                <li class="list"><a target="_blank" href="https://linkedin.com/in/muhammad-ahad-3136b1236" class="drop-down-options" type="button"><i class="bi bi-linkedin icon"></i>LinkedIn</a></li>
-                <li class="list"><a target="_blank" href="https://wa.me/+923130019086" class="drop-down-options" type="button"><i class="bi bi-whatsapp icon"></i>WhatsApp</a></li>
-                <li class="list"><a target="_blank" href="https://www.facebook.com/abdulahad.ansari.1481/" class="drop-down-options" type="button"><i class="bi bi-facebook icon"></i>Facebook</a></li>
-                <li class="list"><a target="_blank" href="https://www.youtube.com/@AhadSTS/" class="drop-down-options" type="button"><i class="bi bi-youtube icon"></i>YouTube</a></li>
-            </ul>
-        </div>
-        <h1 class="bi bi-bar-chart-steps"></h1>
-        <button onclick="logOut()">Sign Out</button>
-    </row>
+                <ul class="dropdown-menu">
+                    <li class="list"><a target="_blank" href="https://github.com/ahadsts9901" class="drop-down-options" type="button"><i class="bi bi-github icon"></i>GitHub</a></li>
+                    <li class="list"><a target="_blank" href="https://linkedin.com/in/muhammad-ahad-3136b1236" class="drop-down-options" type="button"><i class="bi bi-linkedin icon"></i>LinkedIn</a></li>
+                    <li class="list"><a target="_blank" href="https://wa.me/+923130019086" class="drop-down-options" type="button"><i class="bi bi-whatsapp icon"></i>WhatsApp</a></li>
+                    <li class="list"><a target="_blank" href="https://www.facebook.com/abdulahad.ansari.1481/" class="drop-down-options" type="button"><i class="bi bi-facebook icon"></i>Facebook</a></li>
+                    <li class="list"><a target="_blank" href="https://www.youtube.com/@AhadSTS/" class="drop-down-options" type="button"><i class="bi bi-youtube icon"></i>YouTube</a></li>
+                </ul>
+            </div>
+            <h1>Polling App</h1>
+            <button onclick="logOut()" class="logout">Sign Out</button>
+        </row>
 
-    <!-- <form id="login-container " class="column " onsubmit="login(event) ">
-        <h2>Login</h2>
-        <input type="email " id="email " placeholder="Email " required>
-        <input type="password " id="password " placeholder="Password " required>
-        <button type="submit ">Login</button>
-    </form> -->
+        <h2 id="user">Unknown</h2>
 
-    <form class="column " id="poll-container " onsubmit="createPoll(event) ">
-        <h2>Create a Poll</h2>
-        <input type="text " id="poll-question " placeholder="Enter your question " required class="input ">
-        <div id="option-container ">
-            <input type="text " id="option1 " placeholder="Option 1 " required class="input ">
-            <input type="text " id="option2 " placeholder="Option 2 " required class="input ">
-        </div>
-        <button type="submit ">Create Poll</button>
-        <button type="button " onclick="addOption() ">+ Add Option</button>
-        <!-- <button onclick="logout() ">Logout</button> -->
-    </form>
-
-    <column id="vote-container">
+        <button type="button" class="create" onclick="createPoll(event)">Create New Poll</button>
 
     </column>
 
-    <!-- <column id="results-container " style="display: none; ">
-        <h2>Results</h2>
-        <p id="results-question "></p>
-        <ul id="results-list "></ul>
-        <button onclick="backToPoll() ">Back to Poll</button>
-        <button onclick="logout() ">Logout</button>
-    </column> -->
+    <column id="vote-container">
+    </column>
 
     <!-- firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js "></script>
@@ -80,6 +58,19 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <!-- sweet alert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11 "></script>
+    <!-- sweet alert buttons and others styling -->
+    <style>
+        .swal2-confirm:focus,
+        .swal2-deny:focus,
+        .swal2-cancel:focus,
+        .swal2-input:focus {
+            box-shadow: 0 0 4px #212121 !important;
+        }
+        
+        .swal2-input {
+            border: 1px solid #ccc !important;
+        }
+    </style>
     <!-- javascript -->
     <script src="./main.js"></script>
     <!-- bootstrap -->
