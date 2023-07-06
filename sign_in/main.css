@@ -1,7 +1,7 @@
 * {
     font-family: "Poppins", "sans-serif";
-    font-weight: bold;
-    box-sizing: border-box;
+    font-weight: normal!important;
+    box-sizing: border-box!important;
 }
 
 ::placeholder {
@@ -9,17 +9,18 @@
 }
 
 body {
-    /* background-color: #212121!important; */
-    /* color: #fff!important; */
+    background-color: #141414!important;
+    color: #fff!important;
     display: flex;
     flex-direction: column;
     justify-content: right;
     align-items: center;
     row-gap: 2em;
-    padding: 2em 0em !important;
+    padding: 2em 1em !important;
     margin: 0em;
     width: 100vw;
     height: 100vh;
+    /* background-image: url(../polling/index.html); */
 }
 
 i,
@@ -35,26 +36,26 @@ h6 {
 }
 
 .drop-down {
-    background-color: #fff;
-    color: #212121;
+    background-color: #141414;
+    color: #fff;
     border: 0px;
     padding: 0em;
     margin: 0em;
 }
 
 .drop-down:hover {
-    background-color: #fff;
+    background-color: #141414;
 }
 
 .dropdown-menu.show {
-    background-color: #fff;
-    color: #212121;
-    border: 1px solid #212121;
+    background-color: #252525;
+    color: #fff!important;
+    border: 1px solid #fff;
 }
 
 .drop-down-options {
     /* background-color: #fff; */
-    color: #212121;
+    color: #fff;
     border: 0px;
 }
 
@@ -67,7 +68,7 @@ h6 {
 
 a,
 .list>a {
-    color: #212121;
+    color: #fff!important;
     text-decoration: none !important;
     margin: 0.3em !important;
 }
@@ -104,7 +105,6 @@ column,
     border: 0px;
     border-radius: 15px;
     font-size: 1.2em;
-    /* background-image: url(../polling/index.html); */
 }
 
 .button:active {
@@ -114,4 +114,36 @@ column,
 .center {
     width: 100%;
     text-align: center;
+}
+
+form {
+    background-color: #252525;
+    padding: 2em 1em!important;
+    border-radius: 20px;
+    margin: auto;
+}
+
+.input {
+    color: #252525;
+    background-color: #fff;
+    /* border: 1px solid #0c5c36; */
+    border: none;
+    padding: 0.5em;
+    border-radius: 10px;
+}
+
+.input:focus {
+    border: 2px solid #212121;
+}
+
+.input::placeholder {
+    color: #999;
+}
+
+.submit {
+    background-color: #fff;
+    color: #222;
+    padding: 0.5em 1em!important;
+    border: none;
+    border-radius: 10px;
 }
