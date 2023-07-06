@@ -270,7 +270,7 @@ firebase.auth().onAuthStateChanged(function(user) {
         console.log(user.email.slice(0, -10));
     } else {
         document.getElementById("user").innerText = "Unknown";
-        window.location.href = "../sign_up/index.html"
+        window.location.href = "../index.html"
         console.log("not signed in");
     }
 });
