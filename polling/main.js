@@ -149,6 +149,7 @@ function renderPolls() {
 
                     let voteHead = document.createElement("h3");
                     voteHead.innerText = data.question;
+                    voteHead.className += " scroll"
                     voteCont.appendChild(voteHead);
 
                     let optCont = document.createElement("div");
@@ -191,6 +192,12 @@ function renderPolls() {
                     }
 
                     voteCont.appendChild(optCont);
+
+                    let del = document.createElement("p")
+                    del.innerHTML = `<i class="bi bi-trash-fill"></i>`
+                    del.className += " right"
+                    del.addEventListener('click', () => deletePoll(doc.id));
+                    voteCont.appendChild(del)
 
                     container.appendChild(voteCont);
                 });
@@ -269,4 +276,52 @@ firebase.auth().onAuthStateChanged(function(user) {
 
 function setVotedCookie() {
     document.cookie = "voted=true; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+}
+
+function deletePoll(pollId) {
+    Swal.fire({
+        title: 'Enter password',
+        input: 'password',
+        inputAttributes: {
+            autocapitalize: 'off'
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Delete',
+        cancelButtonColor: "#252525",
+        confirmButtonColor: "#252525",
+        showLoaderOnConfirm: true,
+        preConfirm: (max) => {
+            // Perform password validation here
+            if (max === '48597555') { // Replace 'your_password' with the actual password
+                return db.collection('polls')
+                    .doc(pollId)
+                    .delete()
+                    .then(() => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Deleted',
+                            text: 'Poll has been deleted.',
+                            confirmButtonColor: '#252525',
+                        });
+                        renderPolls();
+                    })
+                    .catch((error) => {
+                        console.error('Error deleting poll:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error deleting poll.',
+                            confirmButtonColor: '#252525',
+                        });
+                    });
+            } else {
+                Swal.showValidationMessage('Incorrect password');
+            }
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+        if (result.isDismissed) {
+            // Handle cancel button click
+        }
+    });
 }

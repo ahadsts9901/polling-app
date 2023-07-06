@@ -238,7 +238,7 @@ button {
 
 .create {
     width: fit-content;
-    padding: 0.5em;
+    padding: 0.5em 1em;
     background-color: #fff;
     color: #252525;
     border: none;
@@ -256,4 +256,28 @@ button {
     width: 100%;
     text-align: left;
     padding: 0em 1.5em;
+    overflow-y: hidden;
+    overflow-x: auto;
+}
+
+.scroll {
+    width: 100%;
+    overflow-y: hidden;
+    overflow-x: auto;
+}
+
+.scroll::-moz-scrollbar,
+#user::-moz-scrollbar {
+    display: none;
+}
+
+.scroll::-webkit-scrollbar,
+#user::-webkit-scrollbar {
+    display: none;
+}
+
+.right {
+    width: 100%;
+    text-align: right;
+    padding: 0em 1em;
 }
