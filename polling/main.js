@@ -44,8 +44,8 @@ function createPoll(event) {
         <input id="swal-poll-question" class="swal2-input input-sw" placeholder="Enter your question" required>
         <button id="swal-add-option-btn" class="swal2-styled add-option" type="button">+ Add Option</button>
         <div id="swal-option-container">
-          <input id="swal-option1" class="swal2-input input-sw" placeholder="Option 1" required>
-          <input id="swal-option2" class="swal2-input input-sw" placeholder="Option 2" required>
+          <input id="swal-option1" class="swal2-input input-sw" placeholder="Option 1" required minLength="2" maxLength="16">
+          <input id="swal-option2" class="swal2-input input-sw" placeholder="Option 2" required minLength="2" maxLength="16">
         </div>
         </column>
       `,
@@ -124,6 +124,10 @@ function addOptionToSwal() {
     input.placeholder = "Option " + optionCount;
     input.required = true;
     input.className += " swal2-input input-sw";
+    // input.min = "2"
+    // input.max = "16"
+    input.minLength = "2"
+    input.maxLength = "16"
 
     optionContainer.appendChild(input);
 }
