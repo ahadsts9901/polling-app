@@ -182,7 +182,7 @@ button {
 .opt-cont {
     width: 100%;
     align-items: start;
-    margin-left: 1.5em;
+    /* margin-left: 1.5em; */
 }
 
 .opt-cont>p {
@@ -280,4 +280,17 @@ button {
     width: 100%;
     text-align: right;
     padding: 0em 1em;
+}
+
+.delete-vote-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.center-voted {
+    width: 100%;
+    text-align: center;
+    color: #212121;
 }

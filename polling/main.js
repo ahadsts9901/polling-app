@@ -145,8 +145,6 @@ function renderPolls() {
                 container.innerText = "No Polls Found";
             } else {
                 querySnapshot.forEach(function(doc) {
-
-                    // random colors
                     var data = doc.data();
                     let voteCont = document.createElement("div");
                     voteCont.className = "column border";
@@ -154,7 +152,7 @@ function renderPolls() {
 
                     let voteHead = document.createElement("h3");
                     voteHead.innerText = data.question;
-                    voteHead.className += " scroll"
+                    voteHead.className += " scroll";
                     voteCont.appendChild(voteHead);
 
                     let optCont = document.createElement("div");
@@ -173,14 +171,11 @@ function renderPolls() {
                             optionElement.className += " row";
                             let percentage =
                                 totalVotes > 0 ? (option.votes / totalVotes) * 100 : 0;
-                            optionElement.innerHTML = `${option.text} (${percentage.toFixed(
-                2
-              )}%)`;
+                            optionElement.innerHTML = `${option.text} (${percentage.toFixed(2)}%)`;
                             optionElement.style.width = `${percentage.toFixed(2)}%`;
                             if (optionElement.style.width !== "0%") {
-                                optionElement.style.width = `${percentage.toFixed(2)}%`;
                                 optionElement.style.background = "#dadada";
-                                optionElement.style.color = "#252525"
+                                optionElement.style.color = "#252525";
                             } else {
                                 optionElement.style.background = "white";
                             }
@@ -190,19 +185,40 @@ function renderPolls() {
                             optionElement.addEventListener("click", voteOnOption);
                             optCont.appendChild(optionElement);
                         });
-                    } else {
-                        let noOptions = document.createElement("p");
-                        noOptions.innerText = "No options available";
-                        optCont.appendChild(noOptions);
+
+                        // Display the total number of votes
+                        let voteCountElement = document.createElement("p");
+                        voteCountElement.innerText = `Total Votes: ${totalVotes}`;
+
+                        // Create a div for the delete button and the vote count
+                        let deleteVoteDiv = document.createElement("div");
+                        deleteVoteDiv.className = "delete-vote-container";
+                        deleteVoteDiv.appendChild(voteCountElement);
+
+                        // Create the delete button
+                        let deleteButton = document.createElement("button");
+                        deleteButton.innerHTML = `<i class="bi bi-trash-fill"></i>`;
+                        deleteButton.className = "delete-button";
+                        deleteButton.addEventListener("click", () => deletePoll(doc.id));
+                        deleteVoteDiv.appendChild(deleteButton);
+
+                        optCont.appendChild(deleteVoteDiv);
+
+                        // Check if the user has voted on this poll
+                        const user = firebase.auth().currentUser;
+                        if (user) {
+                            const userEmail = user.email;
+                            if (data.votedUsers && data.votedUsers.includes(userEmail)) {
+                                // User has already voted on this poll
+                                let votedTextElement = document.createElement("p");
+                                votedTextElement.innerText = "VOTED";
+                                votedTextElement.className += " center-voted";
+                                optCont.appendChild(votedTextElement);
+                            }
+                        }
                     }
 
                     voteCont.appendChild(optCont);
-
-                    let del = document.createElement("p")
-                    del.innerHTML = `<i class="bi bi-trash-fill"></i>`
-                    del.className += " right"
-                    del.addEventListener('click', () => deletePoll(doc.id));
-                    voteCont.appendChild(del)
 
                     container.appendChild(voteCont);
                 });
