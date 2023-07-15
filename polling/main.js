@@ -84,6 +84,7 @@ function createPoll(event) {
                     question: question,
                     options: options,
                     timestamp: timestamp,
+                    voted: 0,
                 })
                 .then((docRef) => {
                     console.log("Document written with ID:", docRef.id);
@@ -216,41 +217,62 @@ function voteOnOption(event) {
     let optionIndex = event.target.dataset.index;
     let pollId = event.target.closest(".border").dataset.pollId;
 
-    // Check if the user has already voted using a browser cookie
-    //if (hasVoted()) {
-    //console.log("You have already voted.");
-    //return;
-    //}
+    // Check if a user is authenticated
+    const user = firebase.auth().currentUser;
+    if (user) {
+        const userEmail = user.email;
 
-    // Increment the vote count for the selected option
-    db.collection("polls")
-        .doc(pollId)
-        .get()
-        .then((doc) => {
-            if (doc.exists) {
-                let pollData = doc.data();
-                let options = pollData.options;
-                options[optionIndex].votes++;
-                return db.collection("polls").doc(pollId).update({
-                    options: options,
-                });
-            }
-        })
-        .then(() => {
-            console.log("Vote recorded");
-            // Set a browser cookie to track that the user has voted
-            setVotedCookie();
-            renderPolls();
-        })
-        .catch((error) => {
-            console.error("Error voting on option: ", error);
+        // Check if the user has already voted for this poll
+        db.collection("polls")
+            .doc(pollId)
+            .get()
+            .then((doc) => {
+                if (doc.exists) {
+                    let pollData = doc.data();
+                    let votedUsers = pollData.votedUsers || [];
+
+                    // Check if the user's email is in the votedUsers array
+                    if (votedUsers.includes(userEmail)) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'You have already voted for this poll.',
+                            confirmButtonColor: "#252525"
+                        });
+                    } else {
+                        // Increment the vote count for the selected option
+                        let options = pollData.options;
+                        options[optionIndex].votes++;
+
+                        // Add the user's email to the votedUsers array
+                        votedUsers.push(userEmail);
+
+                        // Update the poll document with the new data
+                        return db.collection("polls").doc(pollId).update({
+                            options: options,
+                            voted: pollData.voted + 1,
+                            votedUsers: votedUsers
+                        });
+                    }
+                }
+            })
+            .then(() => {
+                console.log("Vote recorded");
+                renderPolls();
+            })
+            .catch((error) => {
+                console.error("Error voting on option: ", error);
+            });
+    } else {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'You must be logged in to vote.',
+            confirmButtonColor: "#252525"
         });
+    }
 }
 
-document.addEventListener("DOMContentLoaded", async function() {
-    renderPolls();
-    // await countPolls()
-});
 
 // logout function
 
@@ -330,3 +352,7 @@ function deletePoll(pollId) {
         }
     });
 }
+
+document.addEventListener("DOMContentLoaded", function() {
+    renderPolls();
+});
